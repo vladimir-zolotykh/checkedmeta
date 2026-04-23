@@ -8,6 +8,9 @@ class Field:
         for key, value in kwargs.items():
             self.__dict__[key] = value
 
+    def __set_name__(self, owner, name):
+        self._name = name
+
     def __get__(self, instance, owner=None):
         if not instance:
             return self
@@ -24,10 +27,13 @@ class Field:
 class ValidateMeta(type):
     def __new__(mcls, clsname, bases, clsdict, **kwargs):
         fields = {}
+        name: str
         for name, value in clsdict.items():
             if isinstance(value, Field):
-                fields[name] = value
-                del clsdict[name]
+                field: Field = value
+                field.__set_name__(None, name)
+                fields[name] = field
+                # del clsdict[name]
         clsdict["_fields"] = fields
         return super().__new__(mcls, bases, clsdict, **kwargs)
 
@@ -86,10 +92,6 @@ class Model(metaclass=ValidateMeta):
 
 
 class Exercise(Model):
-    pass
-
-
-class Exercise(Model):
     exercise_name = SizedString(12)
     weight = UnsignedFloat()
     reps = UnsignedInteger()
@@ -101,4 +103,4 @@ class Exercise(Model):
 
 
 if __name__ == "__main__":
-    drill = Exercise("Bench press", 108.5, 2)
+    exer = Exercise("Bench press", 108.5, 2)
