@@ -104,3 +104,4 @@ class Exercise(Model):
 
 if __name__ == "__main__":
     exer = Exercise("Bench press", 108.5, 2)
+    print(exer)
