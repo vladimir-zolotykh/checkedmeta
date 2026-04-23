@@ -17,7 +17,7 @@ class Field:
         return instance.__dict__[self._name]
 
     def __set__(self, instance, value):
-        self.validate(value)
+        # self.validate(value)
         instance.__dict__[self._name] = value
 
     def validate(self, value):
@@ -35,7 +35,7 @@ class ValidateMeta(type):
                 fields[name] = field
                 # del clsdict[name]
         clsdict["_fields"] = fields
-        return super().__new__(mcls, bases, clsdict, **kwargs)
+        return super().__new__(mcls, clsname, bases, clsdict, **kwargs)
 
 
 class SizedField(Field):
@@ -88,11 +88,12 @@ class SizedString(String, SizedField):
 
 
 class Model(metaclass=ValidateMeta):
-    pass
+    def as_csv(self) -> str:
+        return ", ".join(f"{key}={value}" for key, value in self.__dict__.items())
 
 
 class Exercise(Model):
-    exercise_name = SizedString(12)
+    exercise_name = SizedString(size=12)
     weight = UnsignedFloat()
     reps = UnsignedInteger()
 
@@ -104,4 +105,4 @@ class Exercise(Model):
 
 if __name__ == "__main__":
     exer = Exercise("Bench press", 108.5, 2)
-    print(exer)
+    print(exer.as_csv())
