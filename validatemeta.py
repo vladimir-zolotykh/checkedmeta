@@ -54,11 +54,23 @@ class Typed(Field):
         super().__set__(instance, value)
 
 
-class Integer(Field):
+class TypedMeta(type):
+    def __new__(mcls, name, bases, namespace, **kwargs):
+        cls = super().__new__(mcls, name, bases, namespace, **kwargs)
+
+        # Check only subclasses of Typed (but not Typed itself)
+        if any(issubclass(base, Typed) for base in bases) and cls is not Typed:
+            if "field_type" not in namespace:
+                raise TypeError(f"{name} must define 'field_type'")
+
+        return cls
+
+
+class Integer(Typed, metaclass=TypedMeta):
     field_type = int
 
 
-class Float(Field):
+class Float(Typed, metaclass=TypedMeta):
     field_type = float
 
 
@@ -77,7 +89,7 @@ class UnsignedFloat(Float, Unsigned):
     pass
 
 
-class String(Field):
+class String(Typed, metaclass=TypedMeta):
     field_type = str
 
 
@@ -85,6 +97,7 @@ class SizedString(String, SizedField):
     def __set__(self, instance, value):
         if len(value) >= self.size:
             raise ValueError(f"{value}: longer than {self.size} chars")
+        super().__set__(instance, value)
 
 
 class Model(metaclass=ValidateMeta):
@@ -97,8 +110,8 @@ class Exercise(Model):
     weight = UnsignedFloat()
     reps = UnsignedInteger()
 
-    def __init__(self, exer_name, weight, reps):
-        self.exer_name = exer_name
+    def __init__(self, exercise_name, weight, reps):
+        self.exercise_name = exercise_name
         self.weight = weight
         self.reps = reps
 
