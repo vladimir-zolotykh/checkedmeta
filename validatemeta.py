@@ -58,10 +58,20 @@ class TypedMeta(type):
     def __new__(mcls, name, bases, namespace, **kwargs):
         cls = super().__new__(mcls, name, bases, namespace, **kwargs)
 
-        # Check only subclasses of Typed (but not Typed itself)
-        if any(issubclass(base, Typed) for base in bases) and cls is not Typed:
-            if "field_type" not in namespace:
-                raise TypeError(f"{name} must define 'field_type'")
+        # Skip the base class itself
+        if cls is Typed:
+            return cls
+
+        # Apply only to subclasses of Typed
+        if issubclass(cls, Typed):
+            # Look through MRO excluding Typed itself
+            for base in cls.__mro__:
+                if base is Typed:
+                    continue
+                if "field_type" in base.__dict__:
+                    break
+            else:
+                raise TypeError(f"{name} must define 'field_type' in its hierarchy")
 
         return cls
 
