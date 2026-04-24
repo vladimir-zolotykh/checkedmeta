@@ -20,7 +20,7 @@ def Typed(expected_type):
         def __set__(self, instance, value):
             if not isinstance(value, expected_type):
                 raise TypeError()
-            super_set(instance, value)
+            super_set(self, instance, value)
 
         cls.__set__ = __set__
         return cls
@@ -34,33 +34,30 @@ def Unsigned(cls):
     def set(self, instance, value):
         if value < 0:
             raise (f"{value}: must be >= 0")
-        sset(instance, value)
+        sset(self, instance, value)
 
     cls.__set__ = set
     return cls
 
 
-def Sized(size):
-    def cls_deco(cls):
-        sinit = cls.__init__
+def Sized(cls):
+    sinit = cls.__init__
 
-        def init(self, *args, **kwargs):
-            if "size" not in kwargs:
-                raise TypeError("{cls}: Specify `size'")
-            sinit(*args, **kwargs)
+    def init(self, name, **kwargs):
+        if "size" not in kwargs:
+            raise TypeError("{cls}: Specify `size'")
+        sinit(self, name, **kwargs)
 
-        cls.__init__ = init
-        sset = cls.__set__
+    cls.__init__ = init
+    sset = cls.__set__
 
-        def set(self, instance, value):
-            if len(value) >= self.size:
-                raise ValueError(f"{value}: must not exceed {self.size} chars")
-            sset(instance, value)
+    def set(self, instance, value):
+        if len(value) >= self.size:
+            raise ValueError(f"{value}: must not exceed {self.size} chars")
+        sset(self, instance, value)
 
-        cls.__set__ = set
-        return cls
-
-    return cls_deco
+    cls.__set__ = set
+    return cls
 
 
 @Unsigned
@@ -75,16 +72,16 @@ class UnsignedFloat(Field):
     pass
 
 
-@Sized(12)
+@Sized
 @Typed(str)
 class SizedString(Field):
     pass
 
 
 class Exercise:
-    exercise_name = SizedString(size=12)
-    weight = UnsignedFloat()
-    reps = UnsignedInteger()
+    exercise_name = SizedString("exercise_name", size=12)
+    weight = UnsignedFloat("weight")
+    reps = UnsignedInteger("reps")
 
     def __init__(self, exercise_name, weight, reps):
         self.exercise_name = exercise_name
