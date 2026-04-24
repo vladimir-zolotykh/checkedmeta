@@ -16,7 +16,7 @@ from typed_deco import (
 # -------------------------
 
 
-def test_typed_accepts_correct_type():
+def test_typed_accepts_correct_type():  # passed
     class A:
         x = UnsignedInteger("x")
 
@@ -25,7 +25,7 @@ def test_typed_accepts_correct_type():
     assert obj.x == 10
 
 
-def test_typed_rejects_wrong_type():
+def test_typed_rejects_wrong_type():  # passed
     class A:
         x = UnsignedInteger("x")
 
@@ -39,7 +39,7 @@ def test_typed_rejects_wrong_type():
 # -------------------------
 
 
-def test_unsigned_accepts_positive():
+def test_unsigned_accepts_positive():  # passed
     class A:
         x = UnsignedInteger("x")
 
@@ -48,15 +48,12 @@ def test_unsigned_accepts_positive():
     assert obj.x == 5
 
 
-def test_unsigned_rejects_negative():
+def test_unsigned_rejects_negative():  # passed
     class A:
         x = UnsignedInteger("x")
 
     obj = A()
-
-    # NOTE: your code raises a *string*, which is invalid.
-    # Python will actually raise TypeError instead.
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         obj.x = -1
 
 
@@ -65,7 +62,7 @@ def test_unsigned_rejects_negative():
 # -------------------------
 
 
-def test_sized_accepts_valid_length():
+def test_sized_accepts_valid_length():  # passed
     class A:
         s = SizedString("s", size=5)
 
@@ -74,7 +71,7 @@ def test_sized_accepts_valid_length():
     assert obj.s == "abcd"
 
 
-def test_sized_rejects_too_long():
+def test_sized_rejects_too_long():  # passed
     class A:
         s = SizedString("s", size=5)
 
@@ -84,7 +81,7 @@ def test_sized_rejects_too_long():
         obj.s = "abcdef"
 
 
-def test_sized_requires_size_argument():
+def test_sized_requires_size_argument():  # passed
     # This should fail because size is missing
     with pytest.raises(TypeError):
         SizedString("s")
@@ -95,7 +92,7 @@ def test_sized_requires_size_argument():
 # -------------------------
 
 
-def test_exercise_valid():
+def test_exercise_valid():  # passed
     e = Exercise("Bench press", 100.0, 5)
 
     assert e.exercise_name == "Bench press"
@@ -103,19 +100,19 @@ def test_exercise_valid():
     assert e.reps == 5
 
 
-def test_exercise_invalid_weight_type():
+def test_exercise_invalid_weight_type():  # passed
     with pytest.raises(TypeError):
         Exercise("Bench press", "heavy", 5)
 
 
 def test_exercise_negative_weight():
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         Exercise("Bench press", -10.0, 5)
 
 
-def test_exercise_invalid_reps_type():
+def test_exercise_invalid_reps_type():  # passed
     with pytest.raises(TypeError):
-        Exercise("Bench press", 100.0, 2.5)
+        Exercise("Bench press", 100.0, 2.5)  # bad type 2.5
 
 
 def test_exercise_name_too_long():

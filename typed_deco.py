@@ -33,7 +33,7 @@ def Unsigned(cls):
 
     def set(self, instance, value):
         if value < 0:
-            raise (f"{value}: must be >= 0")
+            raise ValueError(f"{value}: must be >= 0")
         sset(self, instance, value)
 
     cls.__set__ = set
