@@ -65,19 +65,19 @@ def Sized(size):
 
 @Unsigned
 @Typed(int)
-class UnsignedInteger:
+class UnsignedInteger(Field):
     pass
 
 
 @Unsigned
 @Typed(float)
-class UnsignedFloat:
+class UnsignedFloat(Field):
     pass
 
 
 @Sized(12)
 @Typed(str)
-class SizedString:
+class SizedString(Field):
     pass
 
 
