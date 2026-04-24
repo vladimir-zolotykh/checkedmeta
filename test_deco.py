@@ -57,6 +57,24 @@ def test_unsigned_rejects_negative():  # passed
         obj.x = -1
 
 
+def test_typed_float_accepts_correct_type():  # passed
+    class A:
+        x = UnsignedFloat("y")
+
+    obj = A()
+    obj.y = 10.3
+    assert obj.y == 10.3
+
+
+def test_unsigned_float_negative():
+    class A:
+        x = UnsignedInteger("y")
+
+    obj = A()
+    with pytest.raises(ValueError):
+        obj.x = -1
+
+
 # -------------------------
 # Sized decorator
 # -------------------------
